@@ -24,11 +24,11 @@ POWER_USB2 =    int('0100000000000',base=2)
 POWER_ALL =     int('0111111111111',base=2)
 POWER_SWITCH =  int('1000000000000',base=2)
 
-class PebPower(object):
+class Power(object):
     """ *PFI EBOX power module* """
 
     def __init__(self, host=PW_HOST):
-        """ connect to arduino board and check current power status """
+        """ set IP address for arduino board """
 
         self.host = host
 
@@ -137,7 +137,7 @@ class PebPower(object):
         self.pulse_power(POWER_SWITCH)
 
 
-class PebTelemetry(object):
+class Telemetry(object):
     """ *PFI EBOX telemetry module* """
 
     def __init__(self, host=TM_HOST):
@@ -161,6 +161,51 @@ class PebTelemetry(object):
         }
 
 
+class LED(object):
+    """ *PFI EBOX LED module* """
+
+    def __init__(self, host=LED_HOST):
+        """ set IP for arduino board """
+        self.host = host
+
+    def off(self):
+        """ Turn off LED """
+
+        tn = telnetlib.Telnet(self.host)
+        tn.write("c\r")
+        tn.read_until(":", TIME_OUT)
+        tn.close()
+
+    def mode_a(self):
+        """ Switch to mode A """
+        # turn on for 10.24us, turn off for 89.64us, period is 0.1ms
+
+        tn = telnetlib.Telnet(self.host)
+        tn.write("a\r")
+        tn.read_until(":", TIME_OUT)
+        tn.close()
+
+    def mode_b(self):
+        """ Switch to mode B """
+        # turn on for 10.24ms, turn off for 89.60ms, period is 100ms
+
+        tn = telnetlib.Telnet(self.host)
+        tn.write("b\r")
+        tn.read_until(":", TIME_OUT)
+        tn.close()
+
+    def set(self, period, dutycycle):
+        """ Set period and duty cycle """
+        # period in ms, duty cyle in %
+
+        tn = telnetlib.Telnet(self.host)
+        tn.write("p" + str(int(period)) + "\r")
+        tn.read_until(":", TIME_OUT)
+        tn.write("d" + str(int(dutycycle * 10.23)) + "\r")
+        tn.read_until(":", TIME_OUT)
+        tn.close()
+
+
 class Adam6015(object):
     """ *PFI ADAM 6015 module* """
 
@@ -172,7 +217,7 @@ class Adam6015(object):
     def query(self):
         """ Read data from Adam 6015 modules """
 
-        data = []
+        readings = []
         for host in self.hosts:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((host, self.port))
@@ -186,7 +231,6 @@ class Adam6015(object):
 
             temp = [0.0] * 7
             j = 9
-            readings = []
             for i in range(7):
                 temp[i] = (ord(data[j]) * 256 + ord(data[j + 1])) / 65535.0 * 200.0 - 50.0
                 j += 2
