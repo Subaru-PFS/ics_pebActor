@@ -1,3 +1,7 @@
+from __future__ import print_function
+from builtins import str
+from builtins import range
+from builtins import object
 import telnetlib
 import socket
 import requests
@@ -69,7 +73,7 @@ class Adam6015(object):
         s.close()
 
         if data[:9] != '\x00\xef\x00\x00\x00\x11\x01\x04\x0e':
-            print "Receiving invalid data"
+            print("Receiving invalid data")
             exit()
 
         temp = [0.0] * 7
