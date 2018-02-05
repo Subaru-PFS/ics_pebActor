@@ -1,13 +1,10 @@
-#!/usr/bin/env python
-"""Install this package. Requires sdss3tools.
+import distutils
+from distutils.core import setup, Extension
 
-To use:
-python setup.py install
-"""
 import sdss3tools
+import os
 
 sdss3tools.setup(
-    description = "PFI Electric Box (EBox) interface",
+    description = "PFI Electric Box",
     name = "ics_pebActor",
-    install_lib="$base/python",
 )
