@@ -17,53 +17,67 @@ class LedCmd(object):
         # passed a single argument, the parsed and typed command.
         #
         self.vocab = [
-            ('led', '@(on|off)', self.setPower),
-            ('led', 'set [<periods>] [<dutycycle>]', self.setParameters),
+            ('led', '@raw', self.raw),
+            ('led', '@(on|flash|off)', self.setPower),
+            ('led', '@(config|configflash) [<ledperiod>] [<dutycycle>]', self.configParameters),
             ('led', 'status', self.status),
         ]
 
         # Define typed command arguments for the above commands.
-        self.keys = keys.KeysDictionary("peb_led", (1, 1),
-                                        keys.Key("periods", types.Float(), help="Period in ms"),
+        self.keys = keys.KeysDictionary("peb_led", (1, 2),
+                                        keys.Key("ledperiod", types.Int(), help="Period in us"),
                                         keys.Key("dutycycle", types.Float(), help="Duty cycle in %"),
                                         )
     @property
     def ledDev(self):
         return self.actor.controllers['led']
 
+    def raw(self, cmd):
+        """ Send a raw command to the led controller """
+
+        cmdTxt = cmd.cmd.keywords['raw'].values[0]
+        ret = self.ledDev.raw(cmdTxt)
+        cmd.inform('text="raw return: %s"' % (ret))
+        self.status(cmd)
+
     def setPower(self, cmd):
         """ Turn on or off LED """
 
         cmdKeys = cmd.cmd.keywords
         powerOn = 'on' in cmdKeys
-        if powerOn:
+        if 'on' in cmdKeys:
             self.ledDev.set_modeA()
-            cmd.inform('ledpower=1')
+        elif 'flash' in cmdKeys:
+            self.ledDev.set_modeB()
         else:
             self.ledDev.power_off()
-            cmd.inform('ledpower=0')
-        cmd.finish()
+        self.status(cmd)
 
-    def setParameters(self, cmd):
-        """ Set period(ms) and duty cycle(%) """
+    def configParameters(self, cmd):
+        """ Configure period(us) and duty cycle(%) """
 
         cmdKeys = cmd.cmd.keywords
-        if 'periods' in cmdKeys:
-            periods = cmdKeys['periods'].values[0]
+        if 'ledperiod' in cmdKeys:
+            period = cmdKeys['ledperiod'].values[0]
         else:
-            periods = 100.0
+            period = None
         if 'dutycycle' in cmdKeys:
             dutycycle = cmdKeys['dutycycle'].values[0]
         else:
-            dutycycle = 20.0
+            dutycycle = None
 
-        self.ledDev.power_set(periods, dutycycle)
-        cmd.inform('ledparam=%0.2f,%0.2f' % (periods, dutycycle))
-        cmd.inform('ledpower=1')
-        cmd.finish()
+        if 'config' in cmdKeys:
+            self.ledDev.config_modeA(period, dutycycle)
+        else:
+            self.ledDev.config_modeB(period, dutycycle)
+        self.status(cmd)
 
     def status(self, cmd, doFinish=True):
         """Report status """
+
+        (period, dutycycle, aperiod, adutycycle, bperiod, bdutycycle) = self.ledDev.query()
+        cmd.inform('ledperiod=%d,%d,%d' % (period, aperiod, bperiod))
+        cmd.inform('dutycycle=%0.1f,%0.1f,%0.1f' % (dutycycle, adutycycle, bdutycycle))
 
         if doFinish:
             cmd.finish()

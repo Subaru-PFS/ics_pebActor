@@ -18,12 +18,13 @@ class PowerCmd(object):
         #
         self.vocab = [
             ('power', '@raw', self.raw),
-            ('power', '@(on|off|bounce) @(agc|leakage|adam|switch|usb|boardb|boardc)', self.setPower),
+            ('power', '@(on|off|bounce) @(agc|leakage|adam|boardb|boardc|usb|switch) [<ids>]', self.setPower),
             ('power', 'status', self.status),
         ]
 
         # Define typed command arguments for the above commands.
-        self.keys = keys.KeysDictionary("peb_power", (1, 1),
+        self.keys = keys.KeysDictionary("peb_power", (1, 2),
+                                        keys.Key("ids", types.String(), help="List of active devices"),
                                         )
     @property
     def powerDev(self):
@@ -40,7 +41,7 @@ class PowerCmd(object):
     def status(self, cmd, doFinish=True):
         """Report camera status and actor version. """
 
-        status = self.powerDev.query()
+        status = ','.join(reversed([s for s in self.powerDev.query()]))
 
         # You need to format this as keywords...
         cmd.inform('power=%s' % status)
@@ -57,13 +58,19 @@ class PowerCmd(object):
                 deviceName = name
                 break
 
+        ids = None
+        if 'ids' in cmdKeys:
+            ids =  [int(id) for id in cmdKeys['ids'].values[0]]
+        else:
+            ids = None
+
         if 'bounce' in cmdKeys:
-            self.powerDev.bounce_power(deviceName)
+            self.powerDev.bounce_power(deviceName, ids)
         elif deviceName in ('boardb', 'boardc', 'switch'):
             cmd.warn('%s only support [bounce] option' % deviceName)
         else:
             powerOn = 'on' in cmdKeys
-            self.powerDev.set_power(deviceName, powerOn)
+            self.powerDev.set_power(deviceName, powerOn, ids)
 
         self.status(cmd)
 

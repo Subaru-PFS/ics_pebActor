@@ -7,7 +7,7 @@
 #include <avr/wdt.h>
 
 #define BOOTLOADER //Comment this line if you are not using bootloader
-//#define DEBUG   //Uncomment this line for debug output
+#define DEBUG   //Uncomment this line for debug output
 #ifdef DEBUG    //Macros are usually in all capital letters.
   #define DPRINT(...)    Serial.print(__VA_ARGS__)     //DPRINT is a macro, debug print
   #define DPRINTLN(...)  Serial.println(__VA_ARGS__)   //DPRINTLN is a macro, debug print with new line
@@ -33,15 +33,15 @@ EthernetClient g_client;
 boolean connected = false;
 unsigned long last_active;
 #define TELNET_TIMEOUT 10000
+#define G_PIN 9
 
-int g_pin; // arduino pin#
-int g_mode;
 String g_strcmd;
-
 long g_aduty; // duty
 long g_aperiod; // period
 long g_bduty; // duty
 long g_bperiod; // period
+long g_cduty; // duty
+long g_cperiod; // period
 
 // setup
 void setup() {
@@ -69,65 +69,69 @@ void setup() {
   
   g_server.begin();
   delay(1000);
-  
-  g_pin = 9;
-  g_aduty = 105; // 0% duty 
+
+  g_aduty = 105; // 10% duty
   g_aperiod = 100; // 100000 = 100ms 1000 = 1ms
-  
-  g_bduty = 105; 
+
+  g_bduty = 105; // 10% duty
   g_bperiod = 100000; // 100000 = 100ms
-  
-  g_mode = 2; // a1 b2 
-  
+
   Timer1.initialize(100000); // the timer's period here (in microseconds)
-  Timer1.pwm(9, 0); // setup pwm on pin 9, 0% duty cycle
+  Timer1.pwm(G_PIN, 0); // setup pwm on pin 9, 0% duty cycle
 
   g_strcmd = String("");
   wdt_enable(WDTO_4S);
 }
 
 void parsing() {
+  char str[256];
+
   if (g_strcmd == "a") {
-    g_mode = 1;
     Timer1.setPeriod(g_aperiod);    
-    Timer1.setPwmDuty(g_pin, g_aduty);
-    DPRINTLN("a");
+    Timer1.setPwmDuty(G_PIN, g_aduty);
+    DPRINT("a ");
+    DPRINT(g_aperiod);
+    DPRINT(" ");
+    DPRINTLN(g_aduty);
+    g_cperiod = g_aperiod;
+    g_cduty = g_aduty;
   } else if (g_strcmd == "b") {
-    g_mode = 2;
     Timer1.setPeriod(g_bperiod);
-    Timer1.setPwmDuty(g_pin, g_bduty);   
-    DPRINTLN("b");
+    Timer1.setPwmDuty(G_PIN, g_bduty);   
+    DPRINT("b ");
+    DPRINT(g_bperiod);
+    DPRINT(" ");
+    DPRINTLN(g_bduty);
+    g_cperiod = g_bperiod;
+    g_cduty = g_bduty;
   } else if (g_strcmd == "c") {
-    Timer1.setPwmDuty(g_pin, 0);   
+    Timer1.setPwmDuty(G_PIN, 0);   
     DPRINTLN("c");
-  } else if (g_strcmd.charAt(0) == 'p') {
-    g_strcmd.setCharAt(0, '0');
-    if (g_mode == 1) {
-      g_aperiod = (long)g_strcmd.toInt()*1000;   
-      Timer1.setPeriod(g_aperiod);
-    } else if (g_mode == 2) {
-      g_bperiod = (long)g_strcmd.toInt()*1000;
-      Timer1.setPeriod(g_bperiod);
-    }
-    DPRINT("p ");
-    DPRINTLN((long)g_strcmd.toInt()*1000);
-  } else if (g_strcmd.charAt(0) == 'd') {
-    g_strcmd.setCharAt(0, '0');
-    if(g_mode ==1) {
-      g_aduty = g_strcmd.toInt();
-      Timer1.setPwmDuty(g_pin, g_aduty);
-    } else if(g_mode ==2) {
-      g_bduty = g_strcmd.toInt();
-      Timer1.setPwmDuty(g_pin, g_bduty);
-    }
-    DPRINT("d ");
-    DPRINTLN(g_strcmd.toInt());
+    g_cperiod = 0;
+    g_cduty = 0;
+  } else if (g_strcmd.charAt(0) == 'f') {
+    g_aperiod = (long)g_strcmd.substring(5).toInt();
+    g_aduty = (long)g_strcmd.substring(1, 5).toInt();
+    DPRINT("f ");
+    DPRINT(g_aperiod);
+    DPRINT(" ");
+    DPRINTLN(g_aduty);
+  } else if (g_strcmd.charAt(0) == 'g') {
+    g_bperiod = (long)g_strcmd.substring(5).toInt();
+    g_bduty = (long)g_strcmd.substring(1, 5).toInt();
+    DPRINT("g ");
+    DPRINT(g_bperiod);
+    DPRINT(" ");
+    DPRINTLN(g_bduty);
   } else if (g_strcmd == "z") {
     g_client.stop();
   } else if (g_strcmd == "rst") {
     // command to test reset function
     DPRINTLN("Reset");
     delay(5000);
+  } else if (g_strcmd == "q") {
+    sprintf(str, "%ld,%ld,%ld,%ld,%ld,%ld\n", g_cperiod, g_cduty, g_aperiod, g_aduty, g_bperiod, g_bduty);
+    g_client.write(str);
   } else {
     DPRINTLN(g_strcmd);
     g_client.write("unknown\n");

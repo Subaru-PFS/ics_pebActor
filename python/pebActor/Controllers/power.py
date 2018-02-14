@@ -18,6 +18,7 @@ POWER_BOARDB =  int('0000100000000',base=2)
 POWER_BOARDC =  int('0001000000000',base=2)
 POWER_USB1 =    int('0010000000000',base=2)
 POWER_USB2 =    int('0100000000000',base=2)
+POWER_USB =     int('0110000000000',base=2)
 POWER_ALL =     int('0111111111111',base=2)
 POWER_SWITCH =  int('1000000000000',base=2)
 
@@ -28,8 +29,7 @@ class power(object):
 
     deviceIds = {'agc':POWER_AGC, 'leakage':POWER_LEAKAGE,
                  'adam':POWER_ADAM, 'switch':POWER_SWITCH,
-                 'usb':POWER_USB1|POWER_USB2,
-                 'boardb':POWER_BOARDB,
+                 'usb':POWER_USB, 'boardb':POWER_BOARDB,
                  'boardc':POWER_BOARDC}
 
     def __init__(self, actor, name,
@@ -54,13 +54,13 @@ class power(object):
         tn.write(str.encode(req))
         res = tn.read_until(b':', TIME_OUT).decode('latin-1')
         tn.close()
-        self.logger.info('sent: %s', res)
+        self.logger.info('get: %s', res)
         return res
 
     def raw(self, cmdStr):
-        """ Send an arbitrary command URL to the controller. """
+        """ Send an arbitrary command to the controller. """
 
-        return self._sendReq(cmdStr)
+        return self._sendReq(cmdStr + "\r")
 
     def _set_power(self, devices, powerOn):
         """ set the power for devices """
@@ -77,16 +77,32 @@ class power(object):
 
         devStr = hex(devices).upper()[2:].zfill(4)
         self._sendReq("P" + devStr + "\r")
-    
-    def set_power(self, devices, powerOn):
+
+    def _build_deviceIds(self, devices, ids=None):
+        """ Construct device IDs """
+
+        dids = 0
+        if devices == 'agc' and ids != None:
+            for i in [1, 2, 3, 4, 5, 6]:
+                if i in ids:
+                    dids |= POWER_AGC1 << (i - 1)
+        elif devices == 'usb' and ids != None:
+            for i in [1, 2]:
+                if i in ids:
+                    dids |= POWER_USB1 << (i - 1)
+        else:
+            dids |= self.deviceIds[devices]
+        return dids
+
+    def set_power(self, devices, powerOn, ids=None):
         """ set the power for devices """
 
-        self._set_power(self.deviceIds[devices], powerOn)
+        self._set_power(self._build_deviceIds(devices, ids), powerOn)
 
-    def bounce_power(self, devices):
+    def bounce_power(self, devices, ids=None):
         """ turn off and on the power for one second """
 
-        self._bounce_power(self.deviceIds[devices])
+        self._bounce_power(self._build_deviceIds(devices, ids))
     
     def query(self):
         """ query all devices """

@@ -29,15 +29,32 @@ class led(object):
         tn = telnetlib.Telnet(self.host)
         self.logger.info('sent: %s', req)
         tn.write(str.encode(req))
-        tn.read_until(b':', TIME_OUT)
+        res = tn.read_until(b':', TIME_OUT).decode('latin-1').split()[0]
         tn.close()
+        return res
 
-    def power_set(self, period, dutycycle):
-        """ set period and duty cycle """
-        # period in ms, duty cyle in %
+    def raw(self, cmdStr):
+        """ Send an arbitrary command to the controller. """
 
-        self._sendReq('p' + str(int(period)) + '\r')
-        self._sendReq('d' + str(int(dutycycle * 10.23)) + '\r')
+        return self._sendReq(cmdStr + '\r')
+
+    def config_modeA(self, period=None, dutycycle=None):
+        """ set period(us) and duty cycle(%) for mode A """
+
+        if period is None:
+            period = int(self.actor.config.get(self.name, 'aperiod'))
+        if dutycycle is None:
+            dutycycle = float(self.actor.config.get(self.name, 'adutycycle'))
+        self._sendReq('f' + str(int(dutycycle * 10.23)).zfill(4) + str(int(period)) + '\r')
+
+    def config_modeB(self, period=None, dutycycle=None):
+        """ set period(us) and duty cycle(%) for mode B """
+
+        if period is None:
+            period = int(self.actor.config.get(self.name, 'bperiod'))
+        if dutycycle is None:
+            dutycycle = float(self.actor.config.get(self.name, 'bdutycycle'))
+        self._sendReq('g' + str(int(dutycycle * 10.23)).zfill(4) + str(int(period)) + '\r')
 
     def power_off(self):
         """ Turn off LED """
@@ -55,6 +72,20 @@ class led(object):
         # Defailt: turn on for 10.24ms, turn off for 89.60ms, period is 100ms
 
         self._sendReq('b\r')
+
+    def query(self):
+        """ Query current LED status """
+
+        res = self._sendReq('q\r')
+        self.logger.info('received: %s', res)
+        res = res.split(',')
+        period = int(res[0])
+        dutycycle = float(res[1]) / 10.23
+        aperiod = int(res[2])
+        adutycycle = float(res[3]) / 10.23
+        bperiod = int(res[4])
+        bdutycycle = float(res[5]) / 10.23
+        return (period, dutycycle, aperiod, adutycycle, bperiod, bdutycycle)
 
     def start(self):
         pass
