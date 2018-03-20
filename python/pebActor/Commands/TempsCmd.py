@@ -26,7 +26,7 @@ class TempsCmd(object):
         return self.actor.controllers['temps']
 
     def status(self, cmd, doFinish=True):
-        """Report status """
+        """Report temperature from RTD sensors."""
 
         status = self.tempsDev.query()
 

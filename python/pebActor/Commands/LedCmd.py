@@ -33,7 +33,7 @@ class LedCmd(object):
         return self.actor.controllers['led']
 
     def raw(self, cmd):
-        """ Send a raw command to the led controller """
+        """Send a raw command to the led controller."""
 
         cmdTxt = cmd.cmd.keywords['raw'].values[0]
         ret = self.ledDev.raw(cmdTxt)
@@ -41,7 +41,7 @@ class LedCmd(object):
         self.status(cmd)
 
     def setPower(self, cmd):
-        """ Turn on or off LED """
+        """Turn on or off LED."""
 
         cmdKeys = cmd.cmd.keywords
         powerOn = 'on' in cmdKeys
@@ -54,7 +54,7 @@ class LedCmd(object):
         self.status(cmd)
 
     def configParameters(self, cmd):
-        """ Configure period(us) and duty cycle(%) """
+        """Configure period(us) and duty cycle(%)."""
 
         cmdKeys = cmd.cmd.keywords
         if 'ledperiod' in cmdKeys:
@@ -73,7 +73,7 @@ class LedCmd(object):
         self.status(cmd)
 
     def status(self, cmd, doFinish=True):
-        """Report status """
+        """Report LED status."""
 
         (period, dutycycle, aperiod, adutycycle, bperiod, bdutycycle) = self.ledDev.query()
         cmd.inform('ledperiod=%d,%d,%d' % (period, aperiod, bperiod))

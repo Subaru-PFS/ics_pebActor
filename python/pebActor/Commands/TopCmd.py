@@ -38,7 +38,7 @@ class TopCmd(object):
         cmd.finish("text='Present and (probably) well'")
 
     def status(self, cmd):
-        """Report camera status and actor version. """
+        """Report actor status and version."""
 
         self.actor.sendVersionKey(cmd)
         
@@ -46,7 +46,7 @@ class TopCmd(object):
         cmd.finish()
 
     def monitor(self, cmd):
-        """ Enable/disable/adjust period controller monitors. """
+        """Enable/disable/adjust period controller monitors. """
         
         period = cmd.cmd.keywords['period'].values[0]
         controllers = cmd.cmd.keywords['controllers'].values

@@ -26,7 +26,7 @@ class FlowCmd(object):
         return self.actor.controllers['flow']
 
     def status(self, cmd, doFinish=True):
-        """Report status """
+        """Report flow meter status."""
 
         status = self.flowDev.query()
 
