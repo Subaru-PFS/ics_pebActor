@@ -28,7 +28,7 @@
 #include <avr/wdt.h>
 
 byte mac[] = { 0x90, 0xA2, 0xDA, 0x0F, 0x87, 0x03 };
-IPAddress ip(10, 1, 120, 12);
+IPAddress ip(10, 1, 164, 98);
 
 // telnet defaults to port 23
 
@@ -38,11 +38,12 @@ boolean connected = false;
 String g_strcmd = "";
 unsigned long last_active;
 #define TELNET_TIMEOUT 10000
+#define SAMPLES 3
 
-int flowPin = 3;
+int flowPin = 2;
 unsigned long duration;
-int leakPin = 2;
-int disPin = 1;
+int leakPin = 6;
+int disPin = 7;
 
 #include <Sensirion.h>
 
@@ -374,13 +375,25 @@ void pduReceived()
         pdu.error = SNMP_ERR_READ_ONLY;
       } else {
         // response packet from get-request
-        duration = pulseIn(flowPin, HIGH);
-        int hz100;
-        if( duration != 0 ) {
-          hz100 = 100 / duration;
-        } else {
-          hz100 = 0;
+        unsigned long t_hi, t_low, t_in;
+        double hz;
+        int i, hz100;
+        t_hi = 0;
+        t_low = 0;
+        for (i=0; i<SAMPLES; i++) {
+          t_in = pulseIn(flowPin, HIGH);
+          if (t_in == 0) break;
+          t_hi += t_in;
+          t_in = pulseIn(flowPin, LOW);
+          if (t_in == 0) break;
+          t_low += t_in;
         }
+        if (i < SAMPLES) {
+          hz = 0.0;
+        } else {
+          hz = 1000000.0 * SAMPLES / (t_hi + t_low);
+        }
+        hz100 = (int)(100 * hz);
         status = pdu.VALUE.encode(SNMP_SYNTAX_INT, hz100);
         pdu.type = SNMP_PDU_RESPONSE;
         pdu.error = status;
@@ -461,17 +474,32 @@ void doSHT75()
 
 void doFlow()
 {
-  char str[30];
+  char str[30], hzstr[16];
+  unsigned long t_hi, t_low, t_in;
+  double hz;
+  int i;
 
-  duration = pulseIn(flowPin, HIGH);
-  unsigned long hz;
-  if( duration != 0 ) {
-    hz = 1/ duration;
-    sprintf(str, "Flow = %lu Hz\n", hz);
-  } else {
-    sprintf(str, "Flow = 0 Hz\n");
+  t_hi = 0;
+  t_low = 0;
+  for (i=0; i<SAMPLES; i++) {
+    t_in = pulseIn(flowPin, HIGH);
+    if (t_in == 0) break;
+    t_hi += t_in;
+    t_in = pulseIn(flowPin, LOW);
+    if (t_in == 0) break;
+    t_low += t_in;
   }
-  g_client.write(str);
+  if (i < SAMPLES) {
+    sprintf(str, "Flow = 0 Hz\n");
+    g_client.write(str);
+  } else {
+    hz = 1000000.0 * SAMPLES / (t_hi + t_low);
+    dtostrf(hz, 6, 1, hzstr);
+    sprintf(str, "Flow = %s Hz\n", hzstr);
+    g_client.write(str);
+    sprintf(str, "High = %lu us, Low = %lu us\n", t_hi/3, t_low/3);
+    g_client.write(str);
+  }
 }
 
 void doLeak()

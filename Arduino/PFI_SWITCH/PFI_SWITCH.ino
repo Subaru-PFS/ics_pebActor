@@ -23,7 +23,7 @@
 byte mac[] = {
   0x90, 0xA2, 0xDA, 0x0F, 0x87, 0x05
 };
-IPAddress ip(10, 1, 120, 11);
+IPAddress ip(10, 1, 164, 97);
 
 // Arduino digital output pins
 

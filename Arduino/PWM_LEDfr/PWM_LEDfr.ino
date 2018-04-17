@@ -7,7 +7,7 @@
 #include <avr/wdt.h>
 
 #define BOOTLOADER //Comment this line if you are not using bootloader
-#define DEBUG   //Uncomment this line for debug output
+//#define DEBUG   //Uncomment this line for debug output
 #ifdef DEBUG    //Macros are usually in all capital letters.
   #define DPRINT(...)    Serial.print(__VA_ARGS__)     //DPRINT is a macro, debug print
   #define DPRINTLN(...)  Serial.println(__VA_ARGS__)   //DPRINTLN is a macro, debug print with new line
@@ -25,7 +25,7 @@ byte mac[] =
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
 };
 
-IPAddress ip(10, 1, 120, 13);
+IPAddress ip(10, 1, 164, 99);
 
 // telnet defaults to port 23
 EthernetServer g_server(23);
