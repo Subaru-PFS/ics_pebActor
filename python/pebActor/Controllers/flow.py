@@ -3,7 +3,7 @@ from builtins import object
 import logging
 import telnetlib
 
-TIME_OUT = 3
+TIME_OUT = 20
 
 class flow(object):
     """ PFI E-box flow meter, leakage dector and humidity sensor """
