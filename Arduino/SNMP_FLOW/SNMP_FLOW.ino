@@ -43,7 +43,8 @@ unsigned long last_active;
 #define FLOW_RATIO 1.08      // Rough estimation for T_period / T_low
 
 int flowPin = 2;
-volatile uint32_t flowTrigger[2];
+volatile uint32_t flowLastTrigger = 0;
+volatile uint32_t flowPeriod = 0;
 unsigned long duration;
 int leakPin = 6;
 int disPin = 7;
@@ -458,13 +459,13 @@ void doSHT75()
 
 double getFlow()
 {
-  uint32_t now = millis();
-  if (flowTrigger[0] == 0 || flowTrigger[1] == 0) {
-    return 0.0;
-  } else if (now - flowTrigger[1] >= 10000) {
+  uint32_t diff = millis() - flowLastTrigger;
+
+  if (flowPeriod == 0 || diff >= 10000) {
+    // If there is no trigger for more than 10s, then the frequency is below 0.1Hz
     return 0.0;
   } else {
-    return 1000.0 / (flowTrigger[1] - flowTrigger[0]);
+    return 1000.0 / flowPeriod;
   }
 }
 
@@ -562,8 +563,6 @@ void setup()
   pinMode(leakPin, INPUT);
   pinMode(disPin, INPUT);
   //
-  flowTrigger[0] = 0;
-  flowTrigger[1] = 0;
   attachInterrupt(digitalPinToInterrupt(flowPin), trigger, FALLING);
   //
   api_status = Agentuino.begin();
@@ -579,8 +578,11 @@ void setup()
 
 void trigger()
 {
-  flowTrigger[0] = flowTrigger[1];
-  flowTrigger[1] = millis();
+  uint32_t now;
+
+  now = millis();
+  flowPeriod = now - flowLastTrigger;
+  flowLastTrigger = now;
 }
 
 void loop()
