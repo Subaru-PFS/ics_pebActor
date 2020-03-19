@@ -24,7 +24,7 @@ Hardware
   - http://www.adnaco.com/products/s3a/
 
 **Managed ethernet switch**
-  - http://www.galileo.com.tw/USB51A.html
+  Volkteck INS-8648 switch
 
 **Arduino ethernet board A**
   This board is used to control the power module with 13 outputs.
