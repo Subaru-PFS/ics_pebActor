@@ -38,9 +38,6 @@ boolean connected = false;
 String g_strcmd = "";
 unsigned long last_active;
 #define TELNET_TIMEOUT 15000
-#define SAMPLES 1
-#define FLOW_TIMEOUT 3000000
-#define FLOW_RATIO 1.08      // Rough estimation for T_period / T_low
 
 int flowPin = 2;
 volatile uint32_t flowLastTrigger = 0;
@@ -51,11 +48,11 @@ int disPin = 7;
 
 #include <Sensirion.h>
 
-const uint8_t dataPin =  8;              // SHT serial data
-const uint8_t clockPin =  9;              // SHT serial clock
+const uint8_t dataPin =  8;             // SHT serial data
+const uint8_t clockPin =  9;            // SHT serial clock
 
 Sensirion tempSensor = Sensirion(dataPin, clockPin);
-
+const uint32_t minUpdateTime = 1000;     // SHT update time (10s)
 float temperature = 0.0;
 float humidity = 0.0;
 float dewpoint = 0.0;
@@ -325,7 +322,7 @@ void pduReceived()
         pdu.error = SNMP_ERR_READ_ONLY;
       } else {
         // response packet from get-request
-        if(locUpTime - lastUpdateTime > 500) {
+        if(locUpTime - lastUpdateTime > minUpdateTime) {
           // No need to update within 5s
           tempSensor.measure(&temperature, &humidity, &dewpoint);
           lastUpdateTime = locUpTime;
@@ -343,7 +340,7 @@ void pduReceived()
         pdu.error = SNMP_ERR_READ_ONLY;
       } else {
         // response packet from get-request
-        if(locUpTime - lastUpdateTime > 500) {
+        if(locUpTime - lastUpdateTime > minUpdateTime) {
           // No need to update within 5s
           tempSensor.measure(&temperature, &humidity, &dewpoint);
           lastUpdateTime = locUpTime;
@@ -361,7 +358,7 @@ void pduReceived()
         pdu.error = SNMP_ERR_READ_ONLY;
       } else {
         // response packet from get-request
-        if(locUpTime - lastUpdateTime > 500) {
+        if(locUpTime - lastUpdateTime > minUpdateTime) {
           // No need to update within 5s
           tempSensor.measure(&temperature, &humidity, &dewpoint);
           lastUpdateTime = locUpTime;
@@ -439,10 +436,13 @@ void pduReceived()
 void doSHT75()
 {
   char str[30];
-  char str_temp[30];
+  char str_temp[10];
 
-  tempSensor.measure(&temperature, &humidity, &dewpoint);
-  delay(1000);
+  if(locUpTime - lastUpdateTime > minUpdateTime) {
+    // No need to update within 5s
+    tempSensor.measure(&temperature, &humidity, &dewpoint);
+    lastUpdateTime = locUpTime;
+  }
 
   dtostrf(temperature, 4, 2, str_temp);
   sprintf(str, "Temperature = %s C, ", str_temp );
@@ -468,26 +468,6 @@ double getFlow()
     return 1000.0 / flowPeriod;
   }
 }
-
-/*
-double getFlow()
-{
-  unsigned long t_in, t_low;
-  int i;
-
-  t_low = 0;
-  for (i=0; i<SAMPLES; i++) {
-    t_in = pulseIn(flowPin, LOW, FLOW_TIMEOUT);
-    if (t_in == 0) break;
-    t_low += t_in;
-  }
-  if (i < SAMPLES) {
-    return 0.0;
-  } else {
-    return 1000000.0 * SAMPLES / (t_low * FLOW_RATIO);
-  }
-}
-*/
 
 void doFlow()
 {
@@ -570,10 +550,10 @@ void setup()
   if ( api_status == SNMP_API_STAT_SUCCESS ) {
     Agentuino.onPduReceive(pduReceived);
     delay(10);
-    wdt_enable(WDTO_8S);
   } else {
     DPRINTLN("Failed to start SNMP server");
   }
+  wdt_enable(WDTO_8S);
 }
 
 void trigger()
@@ -642,4 +622,3 @@ void loop()
   //
   wdt_reset();
 }
-
