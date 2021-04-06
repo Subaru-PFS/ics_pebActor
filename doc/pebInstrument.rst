@@ -60,7 +60,7 @@ to ensure reliability and maximize network up time. Other integrated features of
 Port Isolation etc., optimizes your network performance and provide a secure network, offering a cost-effective
 solution in a small but powerful package.
 
-:IP: 10.1.164.96
+:IP: 133.40.164.96
 :MAC: 00:0b:04:13:1f:82
 :username: admin
 :password: admin
@@ -72,7 +72,7 @@ Arduino board A
 This board controls the power module. It controls the power of 13 devices. We have enabled the on-board watchdog
 function for all three Arduino boards in EBOX.
 
-:IP: 10.1.164.97
+:IP: 133.40.164.97
 :MAC: 90:a2:da:0f:87:05
 
 This is current pin assignment for outputs. The default digital outputs is low for Arduino board. So for AG cameras,
@@ -124,7 +124,7 @@ until available. Also, if a telnet client doesn’t issue any command for more t
 
 ::
 
-  > telnet 10.1.164.97
+  > telnet 133.40.164.97
   :Q
   1FC0		# default value, all devices are power up except for AG cameras
   :X
@@ -147,7 +147,7 @@ until available. Also, if a telnet client doesn’t issue any command for more t
   :P1000		# turn off network switch for a second
   :Q
   1C00
-  :MONITORSET10.1.164.96	# set IP for the switch
+  :MONITORSET133.40.164.96	# set IP for the switch
   Set switch IP done
   :MONITORON			# enable monitor function
   Switch monitor On
@@ -162,7 +162,7 @@ Arduino board B
 
 This board connects to the humidity sensor, flow meter and leakage detector. We can program it to use DHCP or static IP.
 
-:IP: 10.1.164.98
+:IP: 133.40.164.98
 :MAC: 90:a2:da:0f:87:03
 
 There are two ways to read the data:
@@ -172,7 +172,7 @@ There are two ways to read the data:
 
 ::
 
-  > telnet 10.1.194.98
+  > telnet 133.40.194.98
   :Q
   Temperature = 25.80 C, Humidity = 68.61 %, Dewpoint = 19.59 C
   Flow = 0 Hz
@@ -185,7 +185,7 @@ There are two ways to read the data:
 
 ::
 
-  > snmpwalk -c public -v 1 10.1.164.98 1.3.6.1.4.1.50399
+  > snmpwalk -c public -v 1 133.40.164.98 1.3.6.1.4.1.50399
   SNMPv2-SMI::enterprises.50399.1.0 = STRING: "Subaru PFI telemmetry sensors"
   SNMPv2-SMI::enterprises.50399.2.0 = STRING: "1.3.6.1.4.1.50399"
   SNMPv2-SMI::enterprises.50399.3.0 = Timeticks: (6500) 0:01:05.00
@@ -208,10 +208,10 @@ There are two ways to read the data:
   SNMPv2-SMI::enterprises.50399.13.0 = INTEGER: 12
   End of MIB
 
-  > snmpget -c public -v 1 10.1.164.98 1.3.6.1.4.1.50399.1.0
+  > snmpget -c public -v 1 133.40.164.98 1.3.6.1.4.1.50399.1.0
   SNMPv2-SMI::enterprises.50399.1.0 = STRING: "Subaru PFI telemmetry sensors"
 
-  > snmpgetnext -c public -v 1 10.1.164.98 1.3.6.1.4.1.50399.8.0
+  > snmpgetnext -c public -v 1 133.40.164.98 1.3.6.1.4.1.50399.8.0
   SNMPv2-SMI::enterprises.50399.9.0 = INTEGER: 1805
 
 
@@ -220,14 +220,14 @@ Arduino board C
 
 This board controls the LED brightness for fiber illumination.
 
-:IP: 10.1.164.99
+:IP: 133.40.164.99
 :MAC: de:ad:be:ef:fe:ed
 
 We can use telnet to send commands to this board.
 
 ::
 
-  > telnet 10.1.164.99
+  > telnet 133.40.164.99
   # Send (a) or (b) to switch between two different LED modes
   :a     # turn on for 10.24us, turn off for 89.64us, period is 0.1ms
   :b     # turn on for 10.24ms, turn off for 89.60ms, period is 100ms
@@ -294,7 +294,7 @@ Function Code 03/04
     01 04 08 42 C8 00 00 47 AE 42 5D
 
 **Adam 6015 - 1**
-  :IP: 10.1.164.101
+  :IP: 133.40.164.101
   :MAC: 00:d0:c9:f4:2a:78
 
   +-------+-----------+
@@ -314,7 +314,7 @@ Function Code 03/04
   +-------+-----------+
 
 **Adam 6015 - 2**
-  :IP: 10.1.164.102
+  :IP: 133.40.164.102
   :MAC: 00:d0:c9:f4:2a:be
 
   +-------+------------------+
@@ -334,7 +334,7 @@ Function Code 03/04
   +-------+------------------+
 
 **Adam 6015 - 3**
-  :IP: 10.1.164.103
+  :IP: 133.40.164.103
   :MAC: 00:d0:c9:f6:3f:60
 
   +-------+----------+
