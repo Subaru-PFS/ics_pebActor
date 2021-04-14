@@ -172,7 +172,7 @@ There are two ways to read the data:
 
 ::
 
-  > telnet 133.40.194.98
+  > telnet 133.40.164.98
   :Q
   Temperature = 25.80 C, Humidity = 68.61 %, Dewpoint = 19.59 C
   Flow = 0 Hz
