@@ -28,7 +28,7 @@
 #include <avr/wdt.h>
 
 byte mac[] = { 0x90, 0xA2, 0xDA, 0x0F, 0x87, 0x03 };
-IPAddress ip(10, 1, 164, 98);
+IPAddress ip(133, 40, 164, 98);
 
 // telnet defaults to port 23
 
@@ -389,7 +389,7 @@ void pduReceived()
         pdu.error = SNMP_ERR_READ_ONLY;
       } else {
         // response packet from get-request
-        status = pdu.VALUE.encode(SNMP_SYNTAX_INT, digitalRead(leakPin) );
+        status = pdu.VALUE.encode(SNMP_SYNTAX_INT, 1-digitalRead(leakPin) );
         pdu.type = SNMP_PDU_RESPONSE;
         pdu.error = status;
       }
@@ -486,7 +486,7 @@ void doLeak()
   int val;
 
   val = digitalRead(leakPin);
-  sprintf( str, "Liquid leakage %d, ", val);
+  sprintf( str, "Liquid leakage %d, ", 1 - val);
   g_client.write(str);
 
   val = digitalRead(disPin);

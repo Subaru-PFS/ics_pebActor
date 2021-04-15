@@ -25,7 +25,7 @@ byte mac[] =
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
 };
 
-IPAddress ip(10, 1, 164, 99);
+IPAddress ip(133, 40, 164, 99);
 
 // telnet defaults to port 23
 EthernetServer g_server(23);
