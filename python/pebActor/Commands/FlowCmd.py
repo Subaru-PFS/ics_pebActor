@@ -21,6 +21,8 @@ class FlowCmd(object):
         # Define typed command arguments for the above commands.
         self.keys = keys.KeysDictionary("peb_flow", (1, 1),
                                         )
+        self.kFactor = float(self.actor.config.get('flow', 'kFactor'))
+
     @property
     def flowDev(self):
         return self.actor.controllers['flow']
@@ -30,9 +32,12 @@ class FlowCmd(object):
 
         status = self.flowDev.query()
 
+        # convert from Hz to Gal/min
+        speed = status['FlowMeter'] / self.kFactor * 60
+
         # You need to format this as keywords...
         humidity = ','.join(["%0.2f" % s for s in [status['Humidity'], status['Temperature'], status['DewPoint']]])
-        flow = '%0.2f' % status['FlowMeter']
+        flow = '%.2f,%.1f' % (speed, status['FlowMeter'])
         leakage = '%d,%d' % (status['Leakage'], status['LeakageDisconnection'])
         cmd.inform('humidity=%s' % (humidity))
         cmd.inform('flow=%s' % (flow))

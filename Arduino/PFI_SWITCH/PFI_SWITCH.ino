@@ -1,10 +1,22 @@
+
 // power control board
 // by Enos and ChihYi 2017/08/23
+//
+// Modified by Chi-Hung Yan 2021/04/03
+//
+//
 
-#include <Ethernet.h>
 #include <stdlib.h>
 #include <avr/wdt.h>
-#include <ICMPPing.h>
+#include <EthernetClient.h>
+#include <Ethernet.h>
+#include <Dhcp.h>
+#include <EthernetServer.h>
+#include <util.h>
+#include <Dns.h>
+#include <EthernetUdp.h>
+#include <EthernetICMP.h>
+
 
 #define BOOTLOADER //Comment this line if you are not using bootloader
 //#define DEBUG   //Uncomment this line for debug output
@@ -46,7 +58,7 @@ unsigned long last_active;
 // Network Switch to monitor
 
 SOCKET pingSocket = 3;
-ICMPPing ping(pingSocket, (uint16_t)random(0, 255));
+EthernetICMPPing ping(pingSocket, (uint16_t)random(0, 255));
 IPAddress switch_ip(10, 1, 120, 30);
 boolean switch_monitor = false;
 unsigned long last_ping;
@@ -254,7 +266,7 @@ void loop() {
   // Check switch status
   unsigned long now = millis();
   if (switch_monitor && ((now - last_ping) > PING_WAIT)) {
-    ICMPEchoReply echoReply = ping(switch_ip, 1);
+    EthernetICMPEchoReply echoReply = ping(switch_ip, 1);
     DPRINT(switch_ip);
     last_ping = now;
     if (echoReply.status == SUCCESS) {
@@ -276,4 +288,3 @@ void loop() {
 
   wdt_reset();
 }
-
