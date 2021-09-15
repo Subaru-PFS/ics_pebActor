@@ -184,9 +184,9 @@ class power(object):
         """ Reset network switch """
         self._bounce_power(POWER_SWITCH)
 
-    def start(self):
+    def start(self, cmd=None):
         pass
 
-    def stop(self):
+    def stop(self, cmd=None):
         pass
 

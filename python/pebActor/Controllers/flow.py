@@ -44,9 +44,9 @@ class flow(object):
 
         raise NotImplementedError('no raw command')
 
-    def start(self):
+    def start(self, cmd=None):
         pass
 
-    def stop(self):
+    def stop(self, cmd=None):
         pass
 
