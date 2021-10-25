@@ -7,7 +7,7 @@
 //
 
 #include <stdlib.h>
-#include <avr/wdt.h>
+//#include <avr/wdt.h>
 #include <EthernetClient.h>
 #include <Ethernet.h>
 #include <Dhcp.h>
@@ -107,24 +107,8 @@ void setup() {
     digitalWrite(pins[i], LOW);
     mask <<= 1;
   }
-
-  init_power();
-  
-  wdt_enable(WDTO_4S);
-}
-
-
-void init_power(){
-  unsigned long mask = 1;
-  unsigned long g_cmd = g_inv;
-  // AG power control 
-  for (int i = 0; i < 6; i++){
-    power_off(i); 
-  }
-  // Device power control
-  for (int i = 6; i < n_pins; i++) {
-    power_on(i);
-  }
+ 
+//  wdt_enable(WDTO_4S);
 }
 
 void power_on(int n) {
@@ -304,5 +288,5 @@ void loop() {
     }
   }
 
-  wdt_reset();
+//  wdt_reset();
 }
