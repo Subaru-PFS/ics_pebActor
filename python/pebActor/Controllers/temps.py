@@ -47,6 +47,8 @@ class temps(object):
             for i in range(7):
                 temps.append((ord(data[j]) * 256 + ord(data[j + 1])) / 65535.0 * 200.0 - 50.0)
                 j += 2
+            # switch the first two element since AG3 anf AG4 temp sensors are swapped
+            temps[0], temps[1]= temps[1], temps[0]
         return temps
 
     def raw(self, cmdStr):
