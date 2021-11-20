@@ -87,9 +87,8 @@ class led(object):
         bdutycycle = float(res[5]) / 10.23
         return (period, dutycycle, aperiod, adutycycle, bperiod, bdutycycle)
 
-    def start(self):
+    def start(self, cmd=None):
         pass
 
-    def stop(self):
+    def stop(self, cmd=None):
         pass
-

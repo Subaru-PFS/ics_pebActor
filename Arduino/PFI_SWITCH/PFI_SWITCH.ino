@@ -53,7 +53,7 @@ String g_strcmd = "";
 unsigned long g_nSW = 0x0;
 unsigned long g_inv = 0x1FC0;
 unsigned long last_active;
-#define TELNET_TIMEOUT 10000
+#define TELNET_TIMEOUT 300000
 
 // Network Switch to monitor
 
@@ -108,7 +108,23 @@ void setup() {
     mask <<= 1;
   }
 
+  init_power();
+  
   wdt_enable(WDTO_4S);
+}
+
+
+void init_power(){
+  unsigned long mask = 1;
+  unsigned long g_cmd = g_inv;
+  // AG power control 
+  for (int i = 0; i < 6; i++){
+    power_off(i); 
+  }
+  // Device power control
+  for (int i = 6; i < n_pins; i++) {
+    power_on(i);
+  }
 }
 
 void power_on(int n) {
@@ -263,6 +279,8 @@ void loop() {
     }
   }
 
+
+  
   // Check switch status
   unsigned long now = millis();
   if (switch_monitor && ((now - last_ping) > PING_WAIT)) {
