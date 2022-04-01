@@ -518,7 +518,7 @@ void doLeak()
 
   g_client.write(str);
 
-  valveSafeLock = val1||val2;
+  valveSafeLock = digitalRead(valveLockPin);
   sprintf( str, "valveSafeLock status = %d\n", valveSafeLock);
  
   g_client.write(str);
@@ -552,10 +552,12 @@ void parsing()
     doSHT75();
     doFlow();
     doLeak();
-  } else if (g_strcmd.charAt(0) == "f"){
-    lockStatus = (long)g_strcmd.substring(1).toInt();
+  } else if (g_strcmd == "H"){
+    lockStatus = 1;
     valveLockControl(lockStatus);
-    
+  } else if (g_strcmd == "L"){
+    lockStatus = 0;
+    valveLockControl(lockStatus);
   } else if (g_strcmd == "RST") {
     // command to test reset function
     delay(15000);
