@@ -552,11 +552,8 @@ void parsing()
     doSHT75();
     doFlow();
     doLeak();
-  } else if (g_strcmd == "H"){
-    lockStatus = 1;
-    valveLockControl(lockStatus);
-  } else if (g_strcmd == "L"){
-    lockStatus = 0;
+  } else if (g_strcmd.charAt(0) == 'C'){
+    lockStatus = g_strcmd.substring(1).toInt();
     valveLockControl(lockStatus);
   } else if (g_strcmd == "RST") {
     // command to test reset function
