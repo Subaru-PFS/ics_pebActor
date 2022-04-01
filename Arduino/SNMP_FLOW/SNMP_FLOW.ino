@@ -491,7 +491,7 @@ void leakControl(){
   val1 = digitalRead(leakPin);
   val2 = digitalRead(disPin);
 
-  valveSafeLock = val1||val2 ;
+  valveSafeLock = val1||val2;
   if (valveSafeLock == 1){
      digitalWrite(valveLockPin, HIGH);
   } 
@@ -517,8 +517,9 @@ void doLeak()
   }
 
   g_client.write(str);
-  
-  sprintf( str, "valveSafeLock status = %d\n", valveLockPin);
+
+  valveSafeLock = val1||val2;
+  sprintf( str, "valveSafeLock status = %d\n", valveSafeLock);
  
   g_client.write(str);
   
@@ -551,8 +552,8 @@ void parsing()
     doSHT75();
     doFlow();
     doLeak();
-  } else if (g_strcmd == "c"){
-    lockStatus = g_strcmd.substring(1).toInt();
+  } else if (g_strcmd.charAt(0) == "f"){
+    lockStatus = (long)g_strcmd.substring(1).toInt();
     valveLockControl(lockStatus);
     
   } else if (g_strcmd == "RST") {
