@@ -43,6 +43,7 @@ int flowPin = 2;
 volatile uint32_t flowLastTrigger = 0;
 volatile uint32_t flowPeriod = 0;
 unsigned long duration;
+int valveLockPin = 5;
 int leakPin = 6;
 int disPin = 7;
 
@@ -56,6 +57,8 @@ const uint32_t minUpdateTime = 1000;     // SHT update time (10s)
 float temperature = 0.0;
 float humidity = 0.0;
 float dewpoint = 0.0;
+
+int valveSafeLock = 0;
 
 //
 // tkmib - linux mib browser
@@ -480,28 +483,78 @@ void doFlow()
   g_client.write(str);
 }
 
+
+void leakControl(){
+  char str[30];
+  int val1, val2;
+  
+  val1 = digitalRead(leakPin);
+  val2 = digitalRead(disPin);
+
+  valveSafeLock = val1||val2 ;
+  if (valveSafeLock == 1){
+     digitalWrite(valveLockPin, HIGH);
+  } 
+
+}
+
 void doLeak()
 {
-  char str[30];
-  int val;
+  char str[256];
+  int val1, val2;
 
-  val = digitalRead(leakPin);
-  sprintf( str, "Liquid leakage %d, ", 1 - val);
+  
+  val1 = digitalRead(leakPin);
+  sprintf( str, "Liquid leakage %d, ", val1);
   g_client.write(str);
 
-  val = digitalRead(disPin);
-  sprintf( str, "disconnection %d\n", val);
+  val2 = digitalRead(disPin);
+  // If disPin is 0, it means it is connected.
+  if (val2 == 0){
+      sprintf( str, "leakge sensor connected %d\n", val2);
+  } else{
+      sprintf( str, "leakge sensor is fxxxxg disconnected %d\n", val2);
+  }
+
   g_client.write(str);
+  
+  sprintf( str, "valveSafeLock status = %d\n", valveLockPin);
+ 
+  g_client.write(str);
+  
+}
+
+
+void valveLockControl(int lockStatus)
+{
+   char str[256];
+  if (lockStatus == 1){
+     digitalWrite(valveLockPin, HIGH);
+     sprintf( str, "valveSafeLock status = %d\n", lockStatus);
+  } else if (lockStatus == 0){
+     digitalWrite(valveLockPin, LOW);
+     sprintf( str, "valveSafeLock status = %d\n", lockStatus);
+  } else{
+     sprintf( str, "valveSafeLock status = %d unknow/unacceptable.\n", lockStatus);
+  }
+
+   g_client.write(str);
 }
 
 void parsing()
 {
+  
+  int lockStatus;
   char str[30];
-
+  
   if(g_strcmd == "Q") {
     doSHT75();
     doFlow();
     doLeak();
+  } else if (g_strcmd == "c"){
+    lockStatus = g_strcmd.substring(1).toInt();
+    valveLockControl(lockStatus);
+    
   } else if (g_strcmd == "RST") {
     // command to test reset function
     delay(15000);
@@ -542,6 +595,7 @@ void setup()
   pinMode(flowPin, INPUT);
   pinMode(leakPin, INPUT);
   pinMode(disPin, INPUT);
+  pinMode(valveLockPin, OUTPUT);
   //
   attachInterrupt(digitalPinToInterrupt(flowPin), trigger, FALLING);
   //
@@ -586,6 +640,8 @@ void loop()
   char r = 0x0d;
   EthernetClient g_client_new;
 
+  leakControl();
+  
   // Allow only one connection
   if(connected) {
     if(!g_client.connected()) {
