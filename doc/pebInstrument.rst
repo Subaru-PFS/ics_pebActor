@@ -176,7 +176,14 @@ There are two ways to read the data:
   :Q
   Temperature = 25.80 C, Humidity = 68.61 %, Dewpoint = 19.59 C
   Flow = 0 Hz
-  Liquid leakage 1, disconnection 1
+  Liquid leakage 0, disconnection 0
+  valveSafeLock status = 0
+  :C0
+  valveSafeLock status = 0
+  :C1
+  valveSafeLock status = 1
+  :C3
+  valveSafeLock status = 3 unknow/unacceptable.
   :X
   unknown
 
