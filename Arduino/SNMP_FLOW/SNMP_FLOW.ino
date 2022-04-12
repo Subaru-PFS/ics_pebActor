@@ -510,11 +510,7 @@ void doLeak()
 
   val2 = digitalRead(disPin);
   // If disPin is 0, it means it is connected.
-  if (val2 == 0){
-      sprintf( str, "leakge sensor connected %d\n", val2);
-  } else{
-      sprintf( str, "leakge sensor is fxxxxg disconnected %d\n", val2);
-  }
+  sprintf( str, "leakge sensor status %d\n", val2);
 
   g_client.write(str);
 
