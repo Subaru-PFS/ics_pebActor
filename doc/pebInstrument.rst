@@ -25,6 +25,8 @@ Hardware
 
 **Managed ethernet switch**
   Volkteck INS-8648 switch
+  
+  - https://www.actn.fr/backend/pdf//INS-8648MW_UM.pdf
 
 **Arduino ethernet board A**
   This board is used to control the power module with 13 outputs.
