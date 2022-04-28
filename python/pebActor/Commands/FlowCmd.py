@@ -38,10 +38,14 @@ class FlowCmd(object):
         # You need to format this as keywords...
         humidity = ','.join(["%0.2f" % s for s in [status['Humidity'], status['Temperature'], status['DewPoint']]])
         flow = '%.2f,%.1f' % (speed, status['FlowMeter'])
-        leakage = '%d,%d' % (status['Leakage'], status['LeakageDisconnection'])
+        leakage = '%d,%d' % (status['Leakage'],status['LeakageDisconnection'])
+        ValveLockStatus = '%d' % status['ValveLockStatus']
+
         cmd.inform('humidity=%s' % (humidity))
         cmd.inform('flow=%s' % (flow))
-        cmd.inform('leakage=%s' % (leakage))
+        cmd.inform('leakage = %s' % (leakage))
+        cmd.inform('valeLock = %s' % (ValveLockStatus))
+        #cmd.inform(f"valveLock = {status['ValveLockStatus']}")
 
         if doFinish:
             cmd.finish()

@@ -36,7 +36,8 @@ class flow(object):
             'DewPoint': float(res[10]),
             'FlowMeter': float(res[14]),
             'Leakage': int(res[18][:1]),
-            'LeakageDisconnection': int(res[20])
+            'LeakageDisconnection': int(res[22]),
+            'ValveLockStatus': int(res[26])
         }
 
     def raw(self, cmdStr):
