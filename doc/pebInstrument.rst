@@ -8,7 +8,8 @@ Hardware
 **ADAM-6015 (x3) with RTD sensors (3x7)**
   - http://www.omega.com/pptst/RTD-830.html
   - http://buy.advantech.com/Remote-I-O-Modules/Ethernet-I-O-Modules-Analog-IO-Modules/model-ADAM-6015-BE.htm?country=USA&token=636372260221909922&f=ATW&f=AUS
-
+  - https://advdownload.advantech.com/productfile/Downloadfile5/1-24AIR0Z/ADAM-6000_User_Manaul_Ed.11_FINAL.pdf
+  
 **OMRON K7L-U/K7L-UD (Liquid Leakage sensor)**
   - https://www.google.com.tw/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0ahUKEwjhkrHD9LfVAhVBHJQKHYxaDjQQFgglMAA&url=http%3A%2F%2Fwww.edata.omron.com.au%2FeData%2FLevel%2FF080-E1-01A.pdf&usg=AFQjCNHZAAxvnjY3vSkiMtRNaFqYF_ZOOw
 
