@@ -44,7 +44,7 @@ class FlowCmd(object):
         cmd.inform('humidity=%s' % (humidity))
         cmd.inform('flow=%s' % (flow))
         cmd.inform('leakage = %s' % (leakage))
-        cmd.inform('valeLock = %s' % (ValveLockStatus))
+        cmd.inform('valve_status = %s' % (ValveLockStatus))
         #cmd.inform(f"valveLock = {status['ValveLockStatus']}")
 
         if doFinish:
