@@ -39,12 +39,12 @@ class FlowCmd(object):
         humidity = ','.join(["%0.2f" % s for s in [status['Humidity'], status['Temperature'], status['DewPoint']]])
         flow = '%.2f,%.1f' % (speed, status['FlowMeter'])
         leakage = '%d,%d' % (status['Leakage'],status['LeakageDisconnection'])
-        ValveLockStatus = '%d' % status['ValveLockStatus']
+        valve_status = '%d' % status['ValveLockStatus']
 
         cmd.inform('humidity=%s' % (humidity))
         cmd.inform('flow=%s' % (flow))
-        cmd.inform('leakage = %s' % (leakage))
-        cmd.inform('valve_status = %s' % (ValveLockStatus))
+        cmd.inform('leakage=%s' % (leakage))
+        cmd.inform('valve_status=%s' % (valve_status))
         #cmd.inform(f"valveLock = {status['ValveLockStatus']}")
 
         if doFinish:
