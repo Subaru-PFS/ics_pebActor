@@ -14,7 +14,8 @@ Hardware
   - https://www.google.com.tw/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0ahUKEwjhkrHD9LfVAhVBHJQKHYxaDjQQFgglMAA&url=http%3A%2F%2Fwww.edata.omron.com.au%2FeData%2FLevel%2FF080-E1-01A.pdf&usg=AFQjCNHZAAxvnjY3vSkiMtRNaFqYF_ZOOw
 
 **Liquid Flowmeter**
-  - http://www.omega.com/pptst/FPR301_302_303_304.html
+  - https://www.omega.com/en-us/flow-instruments/flow-meters/paddlewheel-flow-meters/p/FPR300-Series
+  - https://assets.omega.com/manuals/test-and-measurement-equipment/flow/turbine-flow-meters/M4172.pdf
 
 **Digital humidity sensor (SHT75)**
   - https://www.sensirion.com/en/environmental-sensors/humidity-sensors/pintype-digital-humidity-sensors/
