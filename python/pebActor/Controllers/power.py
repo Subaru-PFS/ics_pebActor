@@ -46,6 +46,14 @@ class power(object):
         self.host = host
         self.logger.warn('host: %s', self.host)
 
+        # Handling Ebox wiring issue 
+        eboxType = self.actor.config.get('peb', 'eboxtype')
+        if eboxType is 'usb2switched':
+            POWER_USB2 =  int('0000100000000',base=2)
+            POWER_BOARDB =    int('0100000000000',base=2)
+        self.logger.warn('ebox type: %s', eboxType)
+
+
     def _sendReq(self, req):
         """ Actually send the request. """
 
