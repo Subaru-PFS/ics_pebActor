@@ -1,5 +1,6 @@
 from builtins import range
 from builtins import object
+import numpy as np
 import logging
 import telnetlib
 
@@ -26,15 +27,23 @@ class flow(object):
         """ Read data from Arduino board """
 
         tn = telnetlib.Telnet(self.host)
-        tn.write(b'Q\r')
-        data = tn.read_until(b':', TIME_OUT)
-        tn.close()
-        res = data.decode('latin-1').split()
+        flowRaw = []
+
+        for i in range(10):
+            tn.write(b'Q\r')
+            data = tn.read_until(b':', TIME_OUT)
+        
+            res = data.decode('latin-1').split()
+            flowRaw.append(float(res[14]))
+        tn.close()    
+        flowRaw = np.array(flowRaw)
+
         return {
             'Temperature': float(res[2]),
             'Humidity': float(res[6]),
             'DewPoint': float(res[10]),
-            'FlowMeter': float(res[14]),
+            #'FlowMeter': float(res[14]),
+            'FlowMeter': float(np.median(flowRaw)),
             'Leakage': int(res[18][:1]),
             'LeakageDisconnection': int(res[22]),
             'ValveLockStatus': int(res[26])
