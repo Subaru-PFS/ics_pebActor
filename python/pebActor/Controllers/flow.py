@@ -37,6 +37,13 @@ class flow(object):
             flowRaw.append(float(res[14]))
         tn.close()    
         flowRaw = np.array(flowRaw)
+        eboxType = self.actor.config.get('peb', 'eboxtype')
+        if eboxType is 'usb2switched':
+            LeakageDisconnection = int(res[22])
+            ValveLockStatus = int(res[26])
+        else:
+            LeakageDisconnection = int(res[24])
+            ValveLockStatus = int(res[28])
 
         return {
             'Temperature': float(res[2]),
@@ -45,8 +52,8 @@ class flow(object):
             #'FlowMeter': float(res[14]),
             'FlowMeter': float(np.median(flowRaw)),
             'Leakage': int(res[18][:1]),
-            'LeakageDisconnection': int(res[22]),
-            'ValveLockStatus': int(res[26])
+            'LeakageDisconnection': LeakageDisconnection,
+            'ValveLockStatus': ValveLockStatus
         }
 
     def raw(self, cmdStr):
