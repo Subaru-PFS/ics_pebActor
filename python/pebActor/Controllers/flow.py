@@ -38,7 +38,7 @@ class flow(object):
         tn.close()    
         flowRaw = np.array(flowRaw)
         eboxType = self.actor.config.get('peb', 'eboxtype')
-        if eboxType is 'usb2switched':
+        if eboxType == 'usb2switched':
             LeakageDisconnection = int(res[22])
             ValveLockStatus = int(res[26])
         else:

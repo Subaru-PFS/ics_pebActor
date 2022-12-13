@@ -50,7 +50,7 @@ class temps(object):
             
             # switch the first two element since AG3 anf AG4 temp sensors are swapped
             eboxType = self.actor.config.get('peb', 'eboxtype')
-            if eboxType is 'usb2switched':
+            if eboxType == 'usb2switched':
                 temps[0], temps[1]= temps[1], temps[0]
 
         return temps

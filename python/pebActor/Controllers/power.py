@@ -48,7 +48,7 @@ class power(object):
 
         # Handling Ebox wiring issue 
         eboxType = self.actor.config.get('peb', 'eboxtype')
-        if eboxType is 'usb2switched':
+        if eboxType == 'usb2switched':
             POWER_USB2 =  int('0000100000000',base=2)
             POWER_BOARDB =    int('0100000000000',base=2)
         self.logger.warn('ebox type: %s', eboxType)
