@@ -592,6 +592,11 @@ void setup()
   pinMode(leakPin, INPUT);
   pinMode(disPin, INPUT);
   pinMode(valveLockPin, OUTPUT);
+
+  // Initial the default value to LOW, close the valve.
+  //digitalWrite(valveLockPin, LOW);
+  digitalWrite(valveLockPin, HIGH);
+  
   //
   attachInterrupt(digitalPinToInterrupt(flowPin), trigger, FALLING);
   //
