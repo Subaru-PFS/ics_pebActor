@@ -60,7 +60,7 @@ float dewpoint = 0.0;
 
 int valveSafeLock = 0;
 
-const version = '1.0'
+const char version = '1.0';
 
 //
 // tkmib - linux mib browser
@@ -502,7 +502,7 @@ void leakControl(){
 
 void doVersion()
 {
-  vstr = version;
+  char vstr = version;
   char str[256];
 
   sprintf(str, "Current firmware version %s\n", vstr);
