@@ -60,6 +60,8 @@ float dewpoint = 0.0;
 
 int valveSafeLock = 0;
 
+const version = '1.0'
+
 //
 // tkmib - linux mib browser
 //
@@ -498,6 +500,18 @@ void leakControl(){
 
 }
 
+void doVersion()
+{
+  vstr = version;
+  char str[256];
+
+  sprintf(str, "Current firmware version %s\n", vstr);
+
+  g_client.write(str);
+
+}
+
+
 void doLeak()
 {
   char str[256];
@@ -548,6 +562,8 @@ void parsing()
     doSHT75();
     doFlow();
     doLeak();
+  } else if (g_strcmd == "V"){
+    doVersion();
   } else if (g_strcmd.charAt(0) == 'C'){
     lockStatus = g_strcmd.substring(1).toInt();
     valveLockControl(lockStatus);
