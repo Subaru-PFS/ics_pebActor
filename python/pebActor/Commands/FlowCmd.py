@@ -21,8 +21,8 @@ class FlowCmd(object):
         # Define typed command arguments for the above commands.
         self.keys = keys.KeysDictionary("peb_flow", (1, 1),
                                         )
-        self.kFactor = float(self.actor.config.get('flow', 'kFactor'))
-
+        #self.kFactor = float(self.actor.config.get('flow', 'kFactor'))
+        self.kFactor  = self.actor.actorConfig['flow']['kfactor']
     @property
     def flowDev(self):
         return self.actor.controllers['flow']

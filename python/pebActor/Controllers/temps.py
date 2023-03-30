@@ -16,12 +16,16 @@ class temps(object):
         self.logger = logging.getLogger('temps')
 
         if hosts is None:
-            hosts = self.actor.config.get(self.name, 'hosts')
+            #hosts = self.actor.config.get(self.name, 'hosts')
+            hosts = self.actor.actorConfig['temps']['hosts']
         if port is None:
-            port = int(self.actor.config.get(self.name, 'port'))
-        self.hosts = [s.strip() for s in hosts.split(',')]
+            #port = int(self.actor.config.get(self.name, 'port'))
+            port = self.actor.actorConfig['temps']['port']
+
+        #self.hosts = [s.strip() for s in hosts.split(',')]
+        self.hosts = hosts
         self.port = port
-        self.logger.warn('hosts,port: %s,%d', ' '.join(self.hosts), self.port)        
+        self.logger.info('Temps hosts and port: %s,%d', ' '.join(self.hosts), self.port)        
 
     def query(self):
         """ Read data from Adam 6015 modules """
@@ -49,8 +53,10 @@ class temps(object):
                 j += 2
             
             # switch the first two element since AG3 anf AG4 temp sensors are swapped
-            eboxType = self.actor.config.get('peb', 'eboxtype')
-            if eboxType == 'usb2switched':
+            #eboxType = self.actor.config.get('peb', 'eboxtype')
+            eboxType = self.actor.actorConfig['eboxtype']
+            if eboxType == 'oldebox':
+                self.logger.info(f'Loading TEMPS setting for old Ebox')       
                 temps[0], temps[1]= temps[1], temps[0]
 
         return temps
