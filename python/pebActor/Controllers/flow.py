@@ -19,9 +19,10 @@ class flow(object):
         self.logger = logging.getLogger('flow')
 
         if host is None:
-            host = self.actor.config.get(self.name, 'host')
+            #host = self.actor.config.get(self.name, 'host')
+            host = self.actor.actorConfig['flow']['host']
         self.host = host
-        self.logger.warn('host: %s', self.host)        
+        self.logger.info('Flow monitor host: %s', self.host)        
 
     def query(self):
         """ Read data from Arduino board """
@@ -37,13 +38,18 @@ class flow(object):
             flowRaw.append(float(res[14]))
         tn.close()    
         flowRaw = np.array(flowRaw)
-        eboxType = self.actor.config.get('peb', 'eboxtype')
-        if eboxType == 'usb2switched':
-            LeakageDisconnection = int(res[22])
-            ValveLockStatus = int(res[26])
-        else:
-            LeakageDisconnection = int(res[24])
-            ValveLockStatus = int(res[28])
+        
+        #eboxType = self.actor.config.get('peb', 'eboxtype')
+        # eboxType = self.actor.actorConfig.['eboxtype']
+        # if eboxType == 'oldebox':
+        #     self.logger.info(f'Loading setting for old Ebox')        
+        #     LeakageDisconnection = int(res[22])
+        #     ValveLockStatus = int(res[26])
+        # else:
+        #     LeakageDisconnection = int(res[22])
+        #     ValveLockStatus = int(res[26])
+        LeakageDisconnection = int(res[22])
+        ValveLockStatus = int(res[26])
 
         return {
             'Temperature': float(res[2]),

@@ -19,9 +19,10 @@ class led(object):
         self.logger = logging.getLogger('led')
 
         if host is None:
-            host = self.actor.config.get(self.name, 'host')
+            #host = self.actor.config.get(self.name, 'host')
+            host = self.actor.actorConfig['led']['host']
         self.host = host
-        self.logger.warn('host: %s', self.host)        
+        self.logger.info('LED Arduino host: %s', self.host)        
 
     def _sendReq(self, req):
         """ Actually send the request. """
@@ -42,18 +43,25 @@ class led(object):
         """ set period(us) and duty cycle(%) for mode A """
 
         if period is None:
-            period = int(self.actor.config.get(self.name, 'aperiod'))
+            #period = int(self.actor.config.get(self.name, 'aperiod'))
+            period = self.actor.actorConfig['led']['aperiod']
         if dutycycle is None:
-            dutycycle = float(self.actor.config.get(self.name, 'adutycycle'))
+            #dutycycle = float(self.actor.config.get(self.name, 'adutycycle'))
+            dutycycle = self.actor.actorConfig['led']['adutycycle']
+        
+        self.logger.info(f'Setting period = {period} with duty cycle = {dutycycle}')        
+
         self._sendReq('f' + str(int(dutycycle * 10.23)).zfill(4) + str(int(period)) + '\r')
 
     def config_modeB(self, period=None, dutycycle=None):
         """ set period(us) and duty cycle(%) for mode B """
 
         if period is None:
-            period = int(self.actor.config.get(self.name, 'bperiod'))
+            #period = int(self.actor.config.get(self.name, 'bperiod'))
+            period = self.actor.actorConfig['led']['bperiod']
         if dutycycle is None:
-            dutycycle = float(self.actor.config.get(self.name, 'bdutycycle'))
+            #dutycycle = float(self.actor.config.get(self.name, 'bdutycycle'))
+            dutycycle = self.actor.actorConfig['led']['bdutycycle']
         self._sendReq('g' + str(int(dutycycle * 10.23)).zfill(4) + str(int(period)) + '\r')
 
     def power_off(self):

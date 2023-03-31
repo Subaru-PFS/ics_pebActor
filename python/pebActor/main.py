@@ -20,6 +20,8 @@ class OurActor(actorcore.ICC.ICC):
                                    configFile=configFile,
                                    modelNames=modelNames)
 
+        print(f'   actorConfig: {self.actorConfig}')
+        
         self.everConnected = False
 
         self.monitors = dict()
@@ -29,8 +31,13 @@ class OurActor(actorcore.ICC.ICC):
         # Called each time the hub connects to us.
         if self.everConnected is False:
             logging.info("Attaching all controllers...")
-            self.allControllers = [s.strip()
-                                   for s in self.config.get(self.name, 'startingControllers').split(',')]
+
+
+            #self.allControllers = [s.strip()
+            #                       for s in self.config.get(self.name, 'startingControllers').split(',')]
+            
+            self.allControllers = self.actorConfig['startingControllers']
+            
             self.attachAllControllers()
             self.everConnected = True
 

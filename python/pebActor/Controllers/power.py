@@ -42,16 +42,19 @@ class power(object):
         self.logger = logging.getLogger('power')
 
         if host is None:
-            host = self.actor.config.get(self.name, 'host')
+            #host = self.actor.config.get(self.name, 'host')
+            host = self.actor.actorConfig['power']['host']
+
         self.host = host
         self.logger.warn('host: %s', self.host)
 
         # Handling Ebox wiring issue 
-        eboxType = self.actor.config.get('peb', 'eboxtype')
-        if eboxType == 'usb2switched':
+        #eboxType = self.actor.config.get('peb', 'eboxtype')
+        eboxType = self.actor.actorConfig['eboxtype']
+        if eboxType == 'oldebox':
             POWER_USB2 =  int('0000100000000',base=2)
             POWER_BOARDB =    int('0100000000000',base=2)
-        self.logger.warn('ebox type: %s', eboxType)
+        self.logger.info('ebox type is now set to: %s', eboxType)
 
 
     def _sendReq(self, req):
