@@ -4,6 +4,7 @@ from builtins import object
 import opscore.protocols.keys as keys
 import opscore.protocols.types as types
 from opscore.utility.qstr import qstr
+import logging
 
 class TopCmd(object):
 
@@ -29,7 +30,7 @@ class TopCmd(object):
                                         keys.Key("period", types.Int(),
                                                  help='the period to sample at.'),
                                         )
-
+        self.logger = logging.getLogger('peb')
 
     def ping(self, cmd):
         """Query the actor for liveness/happiness."""
@@ -52,11 +53,17 @@ class TopCmd(object):
         controllers = cmd.cmd.keywords['controllers'].values
 
         knownControllers = []
-        for c in self.actor.config.get(self.actor.name, 'controllers').split(','):
-            c = c.strip()
+        for c in self.actor.actorConfig['controllers']:
+            #c = c.strip()
             knownControllers.append(c)
 
         foundOne = False
+
+        if controllers[0] == 'all':
+            controllers = self.actor.actorConfig['controllers']
+        
+        self.logger.info(f'Monitoring controllers : {controllers}')
+        
         for c in controllers:
             if c not in knownControllers:
                 cmd.warn('text="not starting monitor for %s: unknown controller"' % (c))
