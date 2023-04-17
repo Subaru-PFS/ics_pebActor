@@ -42,7 +42,9 @@ class TopCmd(object):
         """Report actor status and version."""
 
         self.actor.sendVersionKey(cmd)
+        type = self.actor.actorConfig['eboxtype']
         
+        cmd.inform(f'text="Current E-box Setting = {type}"')
         cmd.inform('text="Present!"')
         cmd.finish()
 
