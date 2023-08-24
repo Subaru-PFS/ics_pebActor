@@ -53,11 +53,10 @@ class temps(object):
                 j += 2
             
             # switch the first two element since AG3 anf AG4 temp sensors are swapped
-            #eboxType = self.actor.config.get('peb', 'eboxtype')
-            eboxType = self.actor.actorConfig['eboxtype']
-            if eboxType == 'oldebox':
-                self.logger.info(f'Loading TEMPS setting for old Ebox')       
-                temps[0], temps[1]= temps[1], temps[0]
+            #  as well as EBOX1 and EBOX2. see 
+            #  https://github.com/Subaru-PFS/ics_pebActor/blob/master/doc/pebInstrument.rst
+            temps[0], temps[1]= temps[1], temps[0]
+            temps[16], temps[17]= temps[17], temps[16]
 
         return temps
 
