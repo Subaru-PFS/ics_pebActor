@@ -5,6 +5,10 @@ from builtins import object
 import telnetlib
 import logging
 
+#
+#  Switch 
+#
+
 POWER_AGC1 =    int('0000000000001',base=2)
 POWER_AGC2 =    int('0000000000010',base=2)
 POWER_AGC3 =    int('0000000000100',base=2)
@@ -54,8 +58,11 @@ class power(object):
         if eboxType == 'oldebox':
             POWER_USB2 =  int('0000100000000',base=2)
             POWER_BOARDB =    int('0100000000000',base=2)
+            POWER_AGC2 = int('0000000010000',base=2)
+            POWER_AGC5 = int('0000000000010',base=2)
         self.logger.info('ebox type is now set to: %s', eboxType)
-
+        
+            
 
     def _sendReq(self, req):
         """ Actually send the request. """

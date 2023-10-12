@@ -55,7 +55,13 @@ class temps(object):
             # switch the first two element since AG3 anf AG4 temp sensors are swapped
             #  as well as EBOX1 and EBOX2. see 
             #  https://github.com/Subaru-PFS/ics_pebActor/blob/master/doc/pebInstrument.rst
-            temps[0], temps[1]= temps[1], temps[0]
+            eboxType = self.actor.actorConfig['eboxtype']
+            if eboxType == 'newebox':
+                temps[0], temps[1]= temps[1], temps[0]
+
+            #
+            # See https://pfspipe.ipmu.jp/jira/browse/INSTRM-1990
+            #
             temps[16], temps[17]= temps[17], temps[16]
 
         return temps
