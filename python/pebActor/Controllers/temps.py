@@ -56,8 +56,8 @@ class temps(object):
             #  as well as EBOX1 and EBOX2. see 
             #  https://github.com/Subaru-PFS/ics_pebActor/blob/master/doc/pebInstrument.rst
             eboxType = self.actor.actorConfig['eboxtype']
-            if eboxType == 'newebox':
-                temps[0], temps[1]= temps[1], temps[0]
+            
+            temps[0], temps[1]= temps[1], temps[0]
 
             #
             # See https://pfspipe.ipmu.jp/jira/browse/INSTRM-1990
