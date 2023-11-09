@@ -30,6 +30,17 @@ class TempsCmd(object):
 
         status = self.tempsDev.query()
 
+        # switch the first two element since AG3 anf AG4 temp sensors are swapped
+        #  as well as EBOX1 and EBOX2. see 
+        #  https://github.com/Subaru-PFS/ics_pebActor/blob/master/doc/pebInstrument.rst
+        eboxType = self.actor.actorConfig['eboxtype']
+        
+        status[0], status[1]= status[1], status[0]
+        #
+        # See https://pfspipe.ipmu.jp/jira/browse/INSTRM-1990
+        #
+        status[16], status[17]= status[17], status[16]
+
         # You need to format this as keywords...
         temps = ','.join(["%0.2f" % s for s in status])
         cmd.inform('temps=%s' % (temps))

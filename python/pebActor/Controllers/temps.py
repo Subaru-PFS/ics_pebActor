@@ -52,18 +52,7 @@ class temps(object):
                 temps.append((ord(data[j]) * 256 + ord(data[j + 1])) / 65535.0 * 200.0 - 50.0)
                 j += 2
             
-            # switch the first two element since AG3 anf AG4 temp sensors are swapped
-            #  as well as EBOX1 and EBOX2. see 
-            #  https://github.com/Subaru-PFS/ics_pebActor/blob/master/doc/pebInstrument.rst
-            eboxType = self.actor.actorConfig['eboxtype']
-            
-            temps[0], temps[1]= temps[1], temps[0]
-
-            #
-            # See https://pfspipe.ipmu.jp/jira/browse/INSTRM-1990
-            #
-            temps[16], temps[17]= temps[17], temps[16]
-
+    
         return temps
 
     def raw(self, cmdStr):
