@@ -56,6 +56,8 @@ class power(object):
         #eboxType = self.actor.config.get('peb', 'eboxtype')
         eboxType = self.actor.actorConfig['eboxtype']
         if eboxType == 'oldebox':
+            global POWER_AGC2
+            global POWER_AGC5
             POWER_USB2 =  int('0000100000000',base=2)
             POWER_BOARDB =    int('0100000000000',base=2)
             POWER_AGC2 = int('0000000010000',base=2)
@@ -103,7 +105,13 @@ class power(object):
         if devices == 'agc' and ids != None:
             for i in [1, 2, 3, 4, 5, 6]:
                 if i in ids:
-                    dids |= POWER_AGC1 << (i - 1)
+                    # Working on the AG2 and AG5
+                    if i == 2:
+                        dids |= POWER_AGC2
+                    elif i == 5:
+                        dids |= POWER_AGC5
+                    else:
+                        dids |= POWER_AGC1 << (i - 1)
         elif devices == 'usb' and ids != None:
             for i in [1, 2]:
                 if i in ids:
