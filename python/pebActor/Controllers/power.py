@@ -55,14 +55,15 @@ class power(object):
         # Handling Ebox wiring issue 
         #eboxType = self.actor.config.get('peb', 'eboxtype')
         eboxType = self.actor.actorConfig['eboxtype']
-        if eboxType == 'oldebox':
-            global POWER_AGC2
-            global POWER_AGC5
-            POWER_USB2 =  int('0000100000000',base=2)
-            POWER_BOARDB =    int('0100000000000',base=2)
-            POWER_AGC2 = int('0000000010000',base=2)
-            POWER_AGC5 = int('0000000000010',base=2)
+        #if eboxType == 'oldebox':
         self.logger.info('ebox type is now set to: %s', eboxType)
+
+        global POWER_AGC2
+        global POWER_AGC5
+        POWER_USB2 =  int('0000100000000',base=2)
+        POWER_BOARDB =    int('0100000000000',base=2)
+        POWER_AGC2 = int('0000000010000',base=2)
+        POWER_AGC5 = int('0000000000010',base=2)
         
             
 
