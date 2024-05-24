@@ -30,10 +30,10 @@ class pfi(object):
 
         try:
             with socket.create_connection((self.host, self.port), timeout=5) as sock:
-                self.logger.INFO(f"Connection to {self.host} on port {self.port} successful")
+                self.logger.info(f"Connection to {self.host} on port {self.port} successful")
             return True
         except (socket.timeout, socket.error) as e:
-            self.logger.INFO(f"Connection to {self.host} on port {self.port} failed: {e}")
+            self.logger.info(f"Connection to {self.host} on port {self.port} failed: {e}")
             return False
         
 

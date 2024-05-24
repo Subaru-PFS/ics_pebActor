@@ -32,9 +32,9 @@ class PfiCmd(object):
         status = self.PfiDev.query()
 
         if status is True:
-            cmd.inform(f"text='PFI is online'")
+            cmd.inform(f"pfi_status='PFI is online'")
         else:
-            cmd.inform(f"text='PFI is offline'")
+            cmd.inform(f"pfi_status='PFI is offline'")
         
 
         if doFinish:
