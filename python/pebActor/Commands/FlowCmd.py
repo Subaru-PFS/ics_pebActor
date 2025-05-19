@@ -16,6 +16,7 @@ class FlowCmd(object):
         #
         self.vocab = [
             ('flow', 'status', self.status),
+            ('flow', '@valve @(open|close)', self.valve),
         ]
 
         # Define typed command arguments for the above commands.
@@ -26,6 +27,15 @@ class FlowCmd(object):
     @property
     def flowDev(self):
         return self.actor.controllers['flow']
+
+    def valve(self, cmd):
+        """ Open or close flow valve. """
+
+        cmdKeys = cmd.cmd.keywords
+        doOpen = 'open' in cmdKeys
+
+        self.flowDev.openClose(doOpen)
+        self.status(cmd)
 
     def status(self, cmd, doFinish=True):
         """Report flow meter status."""
