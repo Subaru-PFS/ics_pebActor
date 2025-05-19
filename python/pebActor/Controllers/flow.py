@@ -62,6 +62,23 @@ class flow(object):
             'ValveLockStatus': ValveLockStatus
         }
 
+    def openClose(self, doOpen):
+        """Open or close the flow valve"""
+
+        tn = telnetlib.Telnet(self.host)
+
+        cmdInt = int(not doOpen)
+        cmdStr = bytes(f':C{cmdInt}\r', 'latin-1')
+
+        tn.write(cmdStr)
+        data = tn.read_until(b':', TIME_OUT)
+        tn.close()
+
+        res = data.decode('latin-1').split()
+        if res[0] != 'valveSafeLock':
+            self.logger.warning(f'flow controller returned: {res}')
+        return int(res[3])
+
     def raw(self, cmdStr):
         """ Send an arbitrary command URL to the controller. """
 
